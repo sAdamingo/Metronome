@@ -16,9 +16,13 @@ public class mojeokienko extends JFrame implements ActionListener, ChangeListene
    private int duration=60;
     private double bpm=60.0;
 
+    BeatGenerator generator;
+
 
     public mojeokienko()
     {
+        generator = new BeatGenerator();
+
         setSize(300, 500);
         setTitle("Super Metronom");
         setLayout(null);
@@ -85,6 +89,13 @@ public class mojeokienko extends JFrame implements ActionListener, ChangeListene
 //        autorzy.setBounds(20,20,100,100);
 //        autorzy.setVisible(true);
 //        add(autorzy);
+
+
+        // nadanie wartosci poczatkowych
+        bpm=sTempo.getValue();
+        lTempo.setText("BPM "+ bpm);
+        duration=sTime.getValue();
+        lTime.setText(duration + "[s]");
     }
 
 public static void main(String[] args)
@@ -109,8 +120,7 @@ public static void main(String[] args)
             System.out.println("Adam to najlepszy na świecie programista!");
         }
     else if (źródło==bZamknij){
-
-            dispose();
+            System.exit(0);
         }
         else if (źródło==bkto){
             lTworcy.setText("Agnieszka Żak i Adam Stelmach");
@@ -134,29 +144,24 @@ public static void main(String[] args)
         lTime.setText(duration+"[s]");
     }
     public void generateBeats(double bpm, int duration) {
-        double[] beats = new double[(int) ((bpm / 30) * duration)];
-        
 
-        for (int i = 0; i < beats.length; i++) {
-            if (i % 2 == 0)
-                beats[i] = 0;
-            else
-                beats[i] = 2;
+        if(generator.isAlive()) {
+
+            bTworcy.setText("START");
+            generator.stop();
+
+
+        } else {
+
+            bTworcy.setText("STOP");
+
+            generator = new BeatGenerator();
+
+            generator.set(bpm, duration);
+            generator.start();
+
         }
 
-        double startnote = 440 * Math.pow(2.0, 3.0 / 12.0); 
-
-        for (int i = 0; i < beats.length; i++) {
-            beats[i] = beats[i] / 12;
-            beats[i] = (double) Math.pow(2, beats[i]);
-            beats[i] = startnote * beats[i];
-            if (i % 2 == 0)
-                beats[i] = beats[i] / beats[i] - 1;
-        }
-
-        
-        new BeatGenerator(beats, 30 / bpm).start();
-      
     }
 }
 
